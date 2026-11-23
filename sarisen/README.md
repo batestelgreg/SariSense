@@ -235,8 +235,29 @@ Implementation details worth knowing:
    window.SARISENSE_API = "https://sarisen-api.onrender.com";
    ```
 
-2. Repo → **Settings → Pages** → Source: `main` branch, folder `/sarisen/frontend`.
-3. Add your Pages URL to `ALLOWED_ORIGINS` on Render (comma-separated), then redeploy.
+2. Repo → **Settings → Pages** → **Source: Deploy from a branch** →
+   Branch `main`, folder **`/ (root)`**.
+
+   > GitHub Pages only offers `/ (root)` or `/docs` — you **cannot** point it
+   > at `/sarisen/frontend` directly. The repository root therefore contains a
+   > small `index.html` that redirects to `sarisen/frontend/index.html`, so the
+   > public URL stays clean.
+
+3. Your live site becomes:
+
+   ```
+   https://<username>.github.io/SariSense/
+   ```
+
+4. Add that origin to `ALLOWED_ORIGINS` on Render (comma-separated), then
+   redeploy:
+
+   ```
+   ALLOWED_ORIGINS = http://127.0.0.1:5500,https://<username>.github.io
+   ```
+
+   > Use the **origin only** — no path, no trailing slash. A missing entry here
+   > shows up as `blocked by CORS policy` in the browser console.
 
 ### Keep the free instance awake
 
