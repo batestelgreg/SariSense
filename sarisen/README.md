@@ -168,6 +168,32 @@ All endpoints except `/api/health` and the two auth routes require
 
 ---
 
+## AI assistant notes
+
+`/api/assistant` degrades gracefully in three steps, so the chat never shows
+an empty bubble:
+
+| Situation | `source` value | What the owner sees |
+|---|---|---|
+| No key, or still the `.env.example` placeholder | `rules` | Restock summary built from the database |
+| Key present but Gemini errors / times out / returns nothing | `fallback` | Same restock summary |
+| Gemini answered | `gemini` | Conversational answer in their language |
+
+Implementation details worth knowing:
+
+- **`gemini-4-hydrogen` is the verified model.** `gemini-2.0-flash` and
+  `gemini-2.5-flash` now return `404 ... no longer available to new users`,
+  so do not downgrade `GEMINI_MODEL`.
+- `gemini-4-*` are *thinking* models. If the thinking budget is unbounded it
+  eats the entire output allowance and returns empty text. The code therefore
+  requests `thinking_budget=0` first and retries with a plain 2048-token
+  config if the API rejects that field.
+- Transient `503` / `429` responses are retried briefly before falling back.
+- Only the retrieved `STORE DATA` block is sent to Gemini — never the whole
+  table, and never another store's rows.
+
+---
+
 ## Deployment
 
 ### Backend → Render
@@ -182,10 +208,16 @@ All endpoints except `/api/health` and the two auth routes require
    | Build Command | `pip install -r requirements.txt` |
    | Start Command | `waitress-serve --host=0.0.0.0 --port=$PORT app:app` |
 
+   > **Python version:** `backend/runtime.txt` pins **3.12**. This matters —
+   > `numpy 1.26.4` and `scikit-learn 1.5.0` have no wheels for Python 3.13,
+   > so a default Render runtime would try to compile them from source and
+   > fail. If the build still complains, add the environment variable
+   > `PYTHON_VERSION = 3.12.8` and delete `runtime.txt`.
+
 4. **Environment variables** (Environment tab):
 
    ```
-   DATABASE_URL      = postgresql://postgres.<ref>:<pw>@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+   DATABASE_URL      = postgresql://postgres.<ref>:<pw>@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
    SECRET_KEY        = <long random string>
    GEMINI_API_KEY    = <your key>
    GEMINI_MODEL      = gemini-4-hydrogen

@@ -23,27 +23,43 @@ right one for where the code is running.
 
 Go to **Project Settings → Database → Connection string → URI**.
 
-### Option A — Connection Pooler (use this on Render)
+### Option A — Connection Pooler (use this EVERYWHERE — local and Render)
 
 ```
-postgresql://postgres.<PROJECT-REF>:<PASSWORD>@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+postgresql://postgres.<PROJECT-REF>:<PASSWORD>@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
 ```
 
-- Port **6543**
+- Port **5432** (session pooler) or **6543** (transaction pooler)
 - Username is `postgres.<PROJECT-REF>`, **not** just `postgres`
-- Best for serverless/free-tier hosts because it caps open connections
+- This host has an **IPv4** address, so it works on any home/office network
 
-### Option B — Direct connection (use this locally)
+### Option B — Direct connection
 
 ```
 postgresql://postgres:<PASSWORD>@db.<PROJECT-REF>.supabase.co:5432/postgres
 ```
 
 - Port **5432**
-- Good for your laptop, where only one process connects
+- ⚠️ **This host is IPv6-only.** Many home ISPs (and some Windows setups) cannot
+  resolve or route to it, producing
+  `could not translate host name ... No such host is known`.
+- Only use it if `Resolve-DnsName db.<PROJECT-REF>.supabase.co` returns an
+  `A` record.
 
 > **Why two?** Free-tier Postgres allows a limited number of simultaneous
 > connections. The pooler shares them, so a cloud host never exhausts the limit.
+
+### ⚠️ Which one does SariSense use?
+
+**The pooler, in both places.** The direct host returned IPv6-only DNS on the
+machine this project was built on, so `.env` and Render both use:
+
+```
+DATABASE_URL=postgresql://postgres.<PROJECT-REF>:<PASSWORD>@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
+```
+
+If your region is not Singapore, the `aws-1-ap-southeast-1` part changes. Click
+**Connect** in the Supabase dashboard and copy whichever host it prints.
 
 ---
 
@@ -59,7 +75,7 @@ copy .env.example .env
 Then edit `.env`:
 
 ```env
-DATABASE_URL=postgresql://postgres.abcdefghijklm:MyPassword123@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres
+DATABASE_URL=postgresql://postgres.<ref>:<pw>@aws-1-ap-southeast-1.pooler.supabase.com:5432/postgres
 SECRET_KEY=some-long-random-string
 GEMINI_API_KEY=your-key
 GEMINI_MODEL=gemini-4-hydrogen
@@ -209,5 +225,5 @@ a UUID. Every SQL statement is parameterised (`%s`), which blocks SQL injection.
 | `SSL connection is required` | `sslmode` missing | Already forced in `db.py`; make sure you are using that module |
 | `too many clients already` | Pool too large or connections leaking | Lower `DB_POOL_MAX` to `4`; never create connections outside `db_cursor()` |
 | `relation "stores" does not exist` | `schema.sql` never ran | Run it in the SQL Editor |
-| `could not translate host name` | Project paused (free tier) | Open the Supabase dashboard to wake it up |
+| `could not translate host name` | Either the project is paused (free tier) **or** you used the IPv6-only `db.<ref>.supabase.co` host | Wake the project in the dashboard, **and switch to the `aws-1-...pooler.supabase.com` host** |
 | `DATABASE_URL is not set` | `.env` missing or not loaded | Confirm `backend/.env` exists and `load_dotenv()` runs before `db.py` is used |
