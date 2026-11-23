@@ -1,0 +1,24 @@
+# Secrets — never commit these
+.env
+.env.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+
+# ML artefacts
+# forecast_model.pkl IS committed on purpose (only ~228 KB) so Render can
+# serve real forecasts without retraining during the build.
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log

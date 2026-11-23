@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SariSense — Project Conceptualization</title>
+<style>
+  @page { size: Letter; margin: 0.5in 0.6in 0.45in 0.6in; }
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+    font-size: 10.1pt;
+    line-height: 1.30;
+    color: #1a1a1a;
+    margin: 0;
+  }
+
+  .doc-head {
+    text-align: center;
+    border-bottom: 2.2px solid #1F3864;
+    padding-bottom: 5px;
+    margin-bottom: 8px;
+  }
+  .doc-head .course {
+    font-size: 7.8pt;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #5a6b85;
+    font-weight: 700;
+  }
+  .doc-head h1 {
+    font-size: 13pt;
+    margin: 3px 0 1px;
+    color: #1F3864;
+  }
+  .doc-head .sub {
+    font-size: 9pt;
+    color: #444;
+  }
+  .doc-head .members {
+    font-size: 8pt;
+    color: #666;
+    margin-top: 3px;
+  }
+
+  h2.letter {
+    font-size: 10.5pt;
+    color: #fff;
+    background: #1F3864;
+    padding: 3px 9px;
+    margin: 8px 0 5px;
+    letter-spacing: 0.2px;
+  }
+  h3.num {
+    font-size: 10.2pt;
+    color: #1F3864;
+    margin: 8px 0 3px;
+    padding-bottom: 1.5px;
+    border-bottom: 1px solid #d3dae6;
+  }
+  h4.sub {
+    font-size: 9.6pt;
+    color: #2E5496;
+    margin: 5px 0 2px;
+  }
+
+  p { margin: 0 0 4px; text-align: justify; }
+  ul { margin: 2px 0 4px; padding-left: 15px; }
+  li { margin-bottom: 1.5px; page-break-inside: avoid; }
+  h3.num, h4.sub { page-break-after: avoid; }
+  table, .workflow, .title-block { page-break-inside: avoid; }
+
+  .choice { font-size: 9.8pt; margin: 3px 0 3px 5px; }
+  .box {
+    display: inline-block;
+    width: 10px; height: 10px;
+    border: 1.3px solid #1F3864;
+    vertical-align: -1px;
+    margin-right: 6px;
+    position: relative;
+  }
+  .box.checked::after {
+    content: "\2713";
+    position: absolute;
+    left: -1px; top: -4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #1F3864;
+  }
+  .choice-label { font-weight: 700; color: #1F3864; }
+
+  .title-block {
+    background: #F2F5FA;
+    border-left: 3.5px solid #1F3864;
+    padding: 6px 10px;
+    margin: 2px 0 5px;
+  }
+  .title-block .ptitle {
+    font-size: 11.5pt;
+    font-weight: 700;
+    color: #1F3864;
+    line-height: 1.22;
+    margin-bottom: 4px;
+  }
+  .title-block .pdesc {
+    font-size: 9.3pt;
+    text-align: justify;
+    margin: 0;
+    color: #2b2b2b;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2px 0 5px;
+    font-size: 9.3pt;
+  }
+  th {
+    background: #1F3864;
+    color: #fff;
+    text-align: left;
+    padding: 2.8px 6px;
+    font-size: 8.8pt;
+    letter-spacing: 0.2px;
+  }
+  td {
+    padding: 2.4px 6px;
+    border-bottom: 1px solid #dde3ec;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: #F7F9FC; }
+  td.lbl { font-weight: 700; color: #1F3864; }
+  td.lbl2 { font-weight: 700; color: #1F3864; }
+
+  .note {
+    font-size: 8.3pt;
+    color: #5a6b85;
+    font-style: italic;
+    margin: 1px 0 4px;
+  }
+
+  .workflow {
+    background: #F2F5FA;
+    border: 1px dashed #9db0cc;
+    padding: 4px 9px;
+    font-size: 8.8pt;
+    margin: 3px 0 4px;
+  }
+
+  .nowrap { white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="doc-head">
+  <div class="course">Applications Development and Emerging Technologies</div>
+  <h1>Final Project — Project Conceptualization</h1>
+  <div class="sub">Project Category: Web Development Application with Artificial Intelligence</div>
+  <div class="members">Group Members: ____________________________ and ____________________________</div>
+</div>
+
+<h2 class="letter">A. Choice of Project Type</h2>
+<div class="choice"><span class="box checked"></span><span class="choice-label">Web Development Application with AI</span></div>
+<div class="choice"><span class="box"></span>IoT-Based Application with AI</div>
+
+<h2 class="letter">B. Project Proposal</h2>
+
+<h3 class="num">1. Project Title</h3>
+<div class="title-block">
+  <div class="ptitle">SariSense: An AI-Powered Demand Forecasting and Smart Restocking Web Platform for Sari-Sari Stores</div>
+  <p class="pdesc">
+    SariSense is a responsive web application that helps sari-sari store owners decide exactly what to restock by
+    recording their daily sales and using machine learning to forecast the next 7 to 30 days of demand for each
+    product. It detects unusual sales patterns through anomaly detection and generates a prioritized restock list
+    with suggested quantities and the capital needed. It also includes a Gemini-powered AI assistant that answers
+    plain-language questions in Tagalog, Cebuano, or English — such as <i>“Unsa akong paliton para sa sunod
+    semana?”</i> — based on the store's own sales data.
+  </p>
+</div>
+
+<h3 class="num">2. Technology Stack and Tools</h3>
+<table>
+  <tr><th style="width:24%">Layer</th><th>Tool</th></tr>
+  <tr><td class="lbl">Frontend</td><td>HTML5 + CSS3 + Vanilla JavaScript + Bootstrap 5 (CDN) + Chart.js (CDN)</td></tr>
+  <tr><td class="lbl">Backend</td><td>Python 3.11 + Flask + Waitress</td></tr>
+  <tr><td class="lbl">Database</td><td>Supabase (PostgreSQL) + psycopg2-binary</td></tr>
+  <tr><td class="lbl">AI / ML</td><td>scikit-learn + pandas + NumPy + joblib</td></tr>
+  <tr><td class="lbl">AI Assistant</td><td>Google Gemini API (<span class="nowrap">gemini-4-hydrogen</span>) via <span class="nowrap">google-genai</span> SDK</td></tr>
+  <tr><td class="lbl">Hosting (Frontend)</td><td>GitHub Pages</td></tr>
+  <tr><td class="lbl">Hosting (Backend)</td><td>Render (Free instance)</td></tr>
+  <tr><td class="lbl">Hosting (Database)</td><td>Supabase</td></tr>
+  <tr><td class="lbl">Tools</td><td>VS Code + GitHub Desktop + browser DevTools</td></tr>
+</table>
+
+<h3 class="num">3. Outline of Main Features and Functionalities</h3>
+<table>
+  <tr><th style="width:29%">Module</th><th>Key Functionality</th></tr>
+  <tr>
+    <td class="lbl2">1. Store Setup &amp; Onboarding</td>
+    <td>Owner registers, creates a store profile, and selects a preferred language (Tagalog, Cebuano, or English).
+        Products are added with cost price, selling price, and stock.</td>
+  </tr>
+  <tr>
+    <td class="lbl2">2. Sales Recording (POS-Lite)</td>
+    <td>Mobile-friendly sales entry through a tap-to-sell product grid. Stock is deducted automatically and each
+        transaction is logged with a timestamp for later analysis.</td>
+  </tr>
+  <tr>
+    <td class="lbl2">3. AI Forecasting Dashboard</td>
+    <td>Per-product demand forecast for 7, 14, or 30 days as an interactive Chart.js line graph with confidence
+        bounds. A Restock Priority table shows predicted demand, days until stockout, suggested order quantity,
+        and the capital required.</td>
+  </tr>
+  <tr>
+    <td class="lbl2">4. Anomaly &amp; Loss Detection</td>
+    <td>Flags products or days with statistically abnormal sales — possible theft, spoilage, or encoding error —
+        shown as plain-language alert cards with a one-tap verify action.</td>
+  </tr>
+  <tr>
+    <td class="lbl2">5. Conversational AI Assistant</td>
+    <td>Chat grounded in the store's own forecast and stock data. Answers restocking and trend questions in the
+        owner's chosen language and can generate a printable shopping list.</td>
+  </tr>
+  <tr>
+    <td class="lbl2">6. Reports &amp; Export</td>
+    <td>Weekly and monthly sales and profit summaries exportable to CSV for record-keeping and micro-financing.</td>
+  </tr>
+</table>
+
+<div class="workflow">
+  <b>Primary user workflow:</b> Owner logs in &rarr; records the day's sales &rarr; the dashboard updates the forecast and
+  alerts &rarr; owner reviews the prioritized restock list &rarr; asks the AI assistant for clarification &rarr;
+  exports or prints the shopping list.
+</div>
+
+<h3 class="num">4. AI Component Description</h3>
+
+<h4 class="sub">4.1 Machine Learning Model / AI Algorithm</h4>
+<ul>
+  <li><b>Demand forecasting — Gradient Boosting Regressor (scikit-learn).</b> Trained on engineered features: day of
+      week, payday proximity, holiday flags, and rolling 7/14/28-day averages. Quality is measured with MAE and MAPE
+      on a held-out period, targeting MAPE below 20%. The model is serialized with <i>joblib</i> and loaded by the
+      Flask API at startup.</li>
+  <li><b>Anomaly detection — Isolation Forest (scikit-learn).</b> An unsupervised model trained on daily sales volume,
+      basket size, and product mix to surface statistically unusual behavior without labeled data.</li>
+  <li><b>Restock prioritization — rule-based scoring layer.</b> Combines forecast output, current stock, and supplier
+      lead time to rank restock urgency and compute suggested order quantities.</li>
+</ul>
+
+<h4 class="sub">4.2 AI API / Service</h4>
+<ul>
+  <li><b>Google Gemini API — <span class="nowrap">gemini-4-hydrogen</span></b>, accessed through the current
+      <span class="nowrap">google-genai</span> Python SDK. Context is injected as structured store aggregates
+      (forecast values, stock levels, top sellers); no raw customer data is sent. A system instruction constrains
+      the assistant to answer only from the supplied data and in the owner's chosen language.</li>
+</ul>
+
+<h4 class="sub">4.3 Purpose and Function of AI</h4>
+<ul>
+  <li><b>Prediction</b> — forecasts short-term per-product demand, replacing guesswork with a data-driven estimate.</li>
+  <li><b>Anomaly detection</b> — identifies unusual sales patterns indicating inventory loss, spoilage, or recording errors.</li>
+  <li><b>Recommendation</b> — generates a prioritized restock list with suggested quantities and required capital.</li>
+  <li><b>Analysis (NLP)</b> — lets non-technical owners query their own data conversationally in Tagalog, Cebuano, or English.</li>
+</ul>
+<p class="note">Design note: the core intelligence is a trained and evaluated machine-learning model, not a generic
+chatbot wrapper — the language model only translates model output into plain human language.</p>
+
+<h3 class="num">5. Deployment / Hosting Platform</h3>
+<table>
+  <tr><th style="width:20%">Component</th><th style="width:24%">Platform</th><th>Notes</th></tr>
+  <tr><td class="lbl2">Frontend</td><td><b>GitHub Pages</b></td><td>Static HTML/CSS/JS, no build step, served over HTTPS.</td></tr>
+  <tr><td class="lbl2">Backend API</td><td><b>Render</b> (Free instance)</td><td>Flask served by Waitress; auto-deploys from GitHub.</td></tr>
+  <tr><td class="lbl2">Database</td><td><b>Supabase</b></td><td>Managed PostgreSQL with Row-Level Security per store owner.</td></tr>
+</table>
+
+<p><b>Live URL:</b> <span class="nowrap">https://&lt;username&gt;.github.io/sarisen/</span> &nbsp;|&nbsp;
+   <b>API endpoint:</b> <span class="nowrap">https://sarisen-api.onrender.com</span></p>
+
+<p><b>Demo access.</b> A seeded demo store with twelve months of realistic sample sales data and a read-only demo
+account will be provided, so the instructor can test the system immediately without registering.</p>
+
+<p><b>Security and configuration.</b> API keys (<i>GEMINI_API_KEY</i>, <i>SUPABASE_URL</i>, <i>SUPABASE_KEY</i>) are
+stored only as Render environment variables and in a local <i>.env</i> file; the committed <i>.env.example</i>
+contains placeholders only. Every Gemini request is proxied through the backend so keys never reach the browser,
+Supabase Row-Level Security restricts each owner to their own records, passwords are hashed, and all traffic is
+served over HTTPS.</p>
+
+</body>
+</html>
