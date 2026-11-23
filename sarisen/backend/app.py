@@ -745,14 +745,103 @@ _gemini_client = None
 
 
 def _get_gemini():
+    """
+    Return a cached Gemini client, or None when no usable key is configured.
+
+    A key that still looks like the .env.example placeholder is treated as
+    "not configured" so the app quietly uses the rules engine instead of
+    firing a doomed request at Google on every question.
+    """
     global _gemini_client
+    api_key = (os.environ.get("GEMINI_API_KEY") or "").strip()
+
+    if not api_key or api_key.startswith("your-") or api_key == "replace-me":
+        return None
+
     if _gemini_client is None:
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-            return None
         from google import genai
         _gemini_client = genai.Client(api_key=api_key)
     return _gemini_client
+
+
+SYSTEM_PROMPT = (
+    "You are SariSense, a friendly assistant for a Filipino sari-sari "
+    "store owner. Answer ONLY using the STORE DATA provided. "
+    "Reply in the same language the owner used (Tagalog, Cebuano, or "
+    "English). Be short, practical and specific with numbers. "
+    "If the data does not contain the answer, say so plainly."
+)
+
+# Errors worth retrying: Google is busy, not our fault.
+_TRANSIENT = ("503", "429", "UNAVAILABLE", "RESOURCE_EXHAUSTED", "overloaded")
+
+
+def _build_configs(types):
+    """
+    Two configs, tried in order.
+
+    gemini-4-* are "thinking" models. If the thinking budget is left
+    unbounded it consumes the whole output allowance and `response.text`
+    comes back empty - which showed up as a blank chat bubble. So we first
+    ask for no thinking (or a tiny budget); if the installed SDK/API
+    rejects that field we fall back to a plain config with a bigger
+    token allowance so the real answer still fits.
+    """
+    configs = []
+    try:
+        configs.append(
+            types.GenerateContentConfig(
+                system_instruction=SYSTEM_PROMPT,
+                temperature=0.3,
+                max_output_tokens=1200,
+                thinking_config=types.ThinkingConfig(thinking_budget=0),
+            )
+        )
+    except Exception:                              # noqa: BLE001
+        pass
+
+    configs.append(
+        types.GenerateContentConfig(
+            system_instruction=SYSTEM_PROMPT,
+            temperature=0.3,
+            max_output_tokens=2048,
+        )
+    )
+    return configs
+
+
+def _gemini_answer(context: str, question: str):
+    """Ask Gemini. Returns the answer text, or None to use the fallback."""
+    client = _get_gemini()
+    if client is None:
+        return None
+
+    from google.genai import types
+
+    payload = f"STORE DATA\n{context}\n\nOWNER QUESTION\n{question}"
+    last_error = "no configuration worked"
+
+    for config in _build_configs(types):
+        for attempt in range(2):
+            try:
+                response = client.models.generate_content(
+                    model=GEMINI_MODEL,
+                    contents=payload,
+                    config=config,
+                )
+                text = (getattr(response, "text", None) or "").strip()
+                if text:
+                    return text
+                last_error = "empty response text"
+            except Exception as exc:               # noqa: BLE001
+                last_error = exc
+                if not any(token in str(exc) for token in _TRANSIENT):
+                    break                          # not transient - try next config
+                time.sleep(1.0 + attempt)
+
+    app.logger.warning("Gemini call failed: %s", last_error)
+    return None
+
 
 
 def _assistant_context(store_id: str) -> str:
@@ -798,33 +887,15 @@ def assistant():
         return bad("Question is too long (max 500 characters).")
 
     context = _assistant_context(g.store_id)
-    client = _get_gemini()
 
-    if client is None:
-        return ok({"answer": _fallback_answer(context), "source": "rules"})
+    answer = _gemini_answer(context, question)
+    if answer:
+        return ok({"answer": answer, "source": "gemini"})
 
-    try:
-        from google.genai import types
-
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=f"STORE DATA\n{context}\n\nOWNER QUESTION\n{question}",
-            config=types.GenerateContentConfig(
-                system_instruction=(
-                    "You are SariSense, a friendly assistant for a Filipino sari-sari "
-                    "store owner. Answer ONLY using the STORE DATA provided. "
-                    "Reply in the same language the owner used (Tagalog, Cebuano, or "
-                    "English). Be short, practical and specific with numbers. "
-                    "If the data does not contain the answer, say so plainly."
-                ),
-                temperature=0.3,
-                max_output_tokens=600,
-            ),
-        )
-        return ok({"answer": response.text, "source": "gemini"})
-    except Exception as exc:                      # noqa: BLE001
-        app.logger.warning("Gemini call failed: %s", exc)
-        return ok({"answer": _fallback_answer(context), "source": "fallback"})
+    return ok({
+        "answer": _fallback_answer(context),
+        "source": "fallback" if _get_gemini() else "rules",
+    })
 
 
 # ---------------------------------------------------------------------
